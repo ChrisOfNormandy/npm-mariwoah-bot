@@ -25,25 +25,52 @@ function divideArray(array, size) {
     });
 }
 
+/**
+ * 
+ * @param {*[]} array 
+ * @returns {*[]}
+ */
 function shuffle(array) {
+    if (!array.length)
+        return array;
+
+    let j;
+    const arr = array;
+
+    for (let i = array.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    return arr;
+}
+
+/**
+ * 
+ * @param {*[]} array 
+ * @returns {Promise<*[]>}
+ */
+function shuffleAsync(array) {
     if (!array.length)
         return Promise.reject(array);
 
     return new Promise((resolve) => {
         let j;
-        for (let i = array.length - 1; i > 0; i--) {
+        const arr = array;
+
+        for (let i = arr.length - 1; i > 0; i--) {
             j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+            [arr[i], arr[j]] = [arr[j], arr[i]];
         }
 
-        resolve(array);
+        resolve(arr);
     });
 }
 
 /**
  * 
- * @param {Map<>} map 
- * @returns 
+ * @param {Map<*, *>} map 
+ * @returns {object}
  */
 function mapToJson(map) {
     let obj = {};
@@ -56,5 +83,6 @@ function mapToJson(map) {
 module.exports = {
     divideArray,
     shuffle,
+    shuffleAsync,
     mapToJson
 };

@@ -36,7 +36,7 @@ class Output {
     getContent() {
         return (this.error !== null && this.error.message !== undefined)
             ? [this.error.message]
-            : this.content || [];
+            : this.content.concat({ embeds: this.embeds }) || [{ embeds: this.embeds }];
     }
 
     /**
@@ -61,12 +61,23 @@ class Output {
 
     /**
      * 
+     * @param  {...Discord.MessageEmbed} embeds 
+     */
+    addEmbed(...embeds) {
+        this.embeds = this.embeds.concat(embeds);
+
+        return this;
+    }
+
+    /**
+     * 
      * @param  {...any} content 
      */
     constructor(...content) {
         this.content = content;
         this.error = null;
         this.values = [];
+        this.embeds = [];
 
         /**
          * @type {Map<string, *>}

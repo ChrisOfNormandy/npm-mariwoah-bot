@@ -203,18 +203,34 @@ function parse(client, message, prefix, options) {
     return new Promise((resolve, reject) => {
         parseString(client, message.content, prefix, message)
             .then((response) => {
-                console.log('RESPONSE:', response);
+                // console.log('RESPONSE:', response);
 
-                response.getContent().forEach((msg) => {
-                    message.channel.send(msg)
-                        .then((msg) => {
-                            if (response.options.has('clear'))
-                                setTimeout(() => msg.delete().catch((err) => reject(err)), response.options.get('clear').delay * 1000);
+                /**
+                 * 
+                 * @param {Output} output 
+                 */
+                const send = (output) => {
+                    output.getContent().forEach((msg) => {
+                        if (msg) {
+                            message.channel.send(msg)
+                                .then((msg) => {
+                                    if (output.options.has('clear'))
+                                        setTimeout(() => msg.delete().catch((err) => reject(err)), output.options.get('clear').delay * 1000);
+                                })
+                                .catch((err) => reject(err));
+                        }
+                        else {
+                            console.log('Cannot send empty message:', output);
+                        }
+                    });
+                };
 
-                            resolve(response);
-                        })
-                        .catch((err) => reject(err));
-                });
+                if (Array.isArray(response))
+                    response.forEach((output) => send(output));
+                else
+                    send(response);
+
+                resolve(response);
             })
             .catch((err) => {
                 console.log('FAILED TO PARSE COMMAND.');

@@ -38,5 +38,4 @@ declare class Bot {
     prefix: any;
     startupMessage: string;
 }
-import { Intents } from "discord.js";
 import { Client } from "discord.js";

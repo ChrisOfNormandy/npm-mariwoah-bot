@@ -41,6 +41,12 @@ declare class Output {
      * @returns {*}
      */
     getOption(key: string): any;
+    /**
+     *
+     * @param  {...Discord.MessageEmbed} embeds
+     */
+    addEmbed(...embeds: Discord.MessageEmbed[]): Output;
+    embeds: any[];
     content: any[];
     /**
      * @type {Map<string, *>}

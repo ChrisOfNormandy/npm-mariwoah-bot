@@ -19,17 +19,6 @@
                     }
                 }
             ]
-        },
-        "filters": {
-            "chat": {
-                "enabled": true,
-                "bypassRoles": [
-                    "trusted"
-                ]
-            },
-            "name": {
-                "enabled": false
-            }
         }
     },
     "auth": {
@@ -40,28 +29,15 @@
 
 # `bot.js`
 ```js
-const { groups, client } = require('@chrisofnormandy/mariwoah-bot');
-const config = require('./config/config.json');
+const { Intents } = require('discord.js');
+const { Bot } = require('@chrisofnormandy/mariwoah-bot');
+const config; // Import from somewhere or define here.
 
-client.startup(config, true)
-    .then(res => {
-        const commands = require('./src/commands');
+const bot = new Bot(config, [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES], {});
 
-        for (let i in commands)
-            commands[i].forEach(command => groups.addCommandGroup(i).addCommand(command));
-
-        if (config.settings.logging.enabled) {
-            config.settings.logging.channels.forEach(log => {
-                res.bot.guilds.fetch(log.guild)
-                    .then(guild => {
-                        if (log.options.onStart)
-                            guild.channels.cache
-                                .get(log.channel)
-                                .send(`This bot has been configured to output logging notifications to this channel.\nThis is a startup notice.`);
-                    })
-                    .catch(err => console.error('Failed to fetch guild.'));
-            });
-        }
+bot.startup({ devEnabled: true })
+    .then(({bot}) => {
+        // Do something with the logged in Client instance.
     })
-    .catch(err => console.error('Failed to start.'));
+    .catch((err) => console.error(err));
 ```

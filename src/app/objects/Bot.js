@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-unused-vars
-const { Intents, Client } = require('discord.js');
-const { getTimestamp } = require('../handlers').time;
-
 const parse = require('../parser/parse');
-const { logging } = require('../logging/logging');
 const groups = require('../groups');
+
+const { Client } = require('discord.js');
+const { getTimestamp } = require('../handlers').time;
+const { logging } = require('../logging/logging');
+const { database } = require('../handlers');
 
 class Bot {
     /**
@@ -34,7 +34,7 @@ class Bot {
      * @param {{devEnabled: boolean}} options
      * @returns {Promise<{bot: Discord.Client}>}
      */
-    startup(options = { devEnabled: false, database: null }) {
+    startup(options = { devEnabled: false, databaseTables: null }) {
         let opts = this.cleanOptions(options);
 
         return new Promise((resolve, reject) => {
@@ -109,11 +109,32 @@ class Bot {
                 this.client.on('error', onError);
 
                 this.client.on('messageCreate', onMessage);
+
+                if (this.config.settings.database) {
+                    console.log('Logging in to database...');
+                    const connection = database.login(this.config.settings.database);
+
+                    console.log('Connected:', connection !== null);
+
+                    if (options.databaseTables) {
+                        return new Promise((resolve, reject) => {
+                            database.preloadTables(options.databaseTables, !!options.resetDatabase)
+                                .then(() => resolve(true))
+                                .catch((err) => reject(err));
+                        });
+                    }
+                }
+
+                return Promise.resolve(true);
             };
 
             if (this.config.auth.token) {
                 this.client.login(this.config.auth.token)
-                    .then(onLogin)
+                    .then(() => {
+                        onLogin()
+                            .then(() => resolve({ bot: this.client }))
+                            .catch((err) => reject(err));
+                    })
                     .catch((err) => reject(err));
             }
             else
@@ -151,6 +172,11 @@ class Bot {
 
         for (let group in commands)
             commands[group].forEach((command) => groups.addCommandGroup(group).addCommand(command));
+
+        if (config.settings.dev.enabled) {
+            const { generateDependencyReport } = require('@discordjs/voice');
+            console.log(generateDependencyReport());
+        }
     }
 }
 
