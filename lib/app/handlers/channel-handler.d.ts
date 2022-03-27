@@ -16,27 +16,27 @@ export namespace voiceChannel {
      * @param {Discord.Message} message
      * @returns
      */
-    function connection(message: Discord.Message<boolean>): VoiceConnection | undefined;
+    function connection(message: Discord.Message<boolean>): import("@discordjs/voice").VoiceConnection | undefined;
     /**
      *
      * @param {Discord.Message} message
      * @returns
      */
-    function connection(message: Discord.Message<boolean>): VoiceConnection | undefined;
-    /**
-     *
-     * @param {Discord.Message} message
-     * @param {string} channelId
-     * @returns
-     */
-    function join(message: Discord.Message<boolean>, channelId: string): VoiceConnection;
+    function connection(message: Discord.Message<boolean>): import("@discordjs/voice").VoiceConnection | undefined;
     /**
      *
      * @param {Discord.Message} message
      * @param {string} channelId
      * @returns
      */
-    function join(message: Discord.Message<boolean>, channelId: string): VoiceConnection;
+    function join(message: Discord.Message<boolean>, channelId: string): import("@discordjs/voice").VoiceConnection;
+    /**
+     *
+     * @param {Discord.Message} message
+     * @param {string} channelId
+     * @returns
+     */
+    function join(message: Discord.Message<boolean>, channelId: string): import("@discordjs/voice").VoiceConnection;
     /**
      *
      * @param {Discord.Message} message
@@ -49,8 +49,8 @@ export namespace voiceChannel {
     function leave(message: Discord.Message<boolean>): void;
 }
 export namespace audioPlayer {
-    function create(): AudioPlayer;
-    function create(): AudioPlayer;
+    function create(): import("@discordjs/voice").AudioPlayer;
+    function create(): import("@discordjs/voice").AudioPlayer;
     /**
      *
      * @param {AudioPlayer} player
@@ -75,19 +75,5 @@ export namespace audioPlayer {
      * @returns
      */
     function createResource(stream: internal.Readable): import("@discordjs/voice").AudioResource<any>;
-    /**
-     *
-     * @param {AudioPlayer} player
-     * @param {AudioResource} resource
-     */
-    function play(player: AudioPlayer, resource: AudioResource): AudioPlayer;
-    /**
-     *
-     * @param {AudioPlayer} player
-     * @param {AudioResource} resource
-     */
-    function play(player: AudioPlayer, resource: AudioResource): AudioPlayer;
 }
 import Discord = require("discord.js");
-import { VoiceConnection } from "@discordjs/voice";
-import { AudioPlayer } from "@discordjs/voice";

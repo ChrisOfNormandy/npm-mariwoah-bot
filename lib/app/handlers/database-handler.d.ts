@@ -26,7 +26,7 @@ export function login(config: {
     port: number;
 }): Pool;
 export function query(str: any): Promise<any>;
-export function search(table: any, options?: {}): Promise<any>;
+export function select(table: any, options?: {}): Promise<any>;
 /**
  *
  * @param {string} table
