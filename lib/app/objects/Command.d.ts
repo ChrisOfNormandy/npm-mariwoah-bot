@@ -3,22 +3,35 @@ declare class Command {
     /**
      *
      * @param {string} group
-     * @param {function(Discord.Message, MessageData)} func
+     * @param {string} name
+     * @param {function(import('discord.js').Message, import('./MessageData'))} func
      */
-    constructor(group?: string, func?: (arg0: Discord.Message, arg1: MessageData) => any);
+    constructor(group?: string, name?: string, func?: (arg0: import('discord.js').Message, arg1: import('./MessageData')) => any);
     /**
      *
-     * @returns {string}
+     * @returns
      */
     getGroup(): string;
     /**
      *
-     * @returns {{command: RegExp, arguments: RegExp, argumentIndexes: number[], argsOptional: boolean}}
+     * @returns
      */
     getRegex(): {
+        /**
+         * @type {RegExp}
+         */
         command: RegExp;
+        /**
+         * @type {RegExp}
+         */
         arguments: RegExp;
+        /**
+         * @type {number[]}
+         */
         argumentIndexes: number[];
+        /**
+         * @type {boolean}
+         */
         argsOptional: boolean;
     };
     /**
@@ -27,51 +40,63 @@ declare class Command {
      * @param {RegExp} args
      * @param {number[]} indexes
      * @param {boolean} optional
-     * @returns {Command}
+     * @returns
      */
     setRegex(command: RegExp, args?: RegExp, indexes?: number[], optional?: boolean): Command;
-    /**
-     * @type {{command: RegExp, arguments: RegExp, argumentIndexes: number[], argsOptional: boolean}}
-     */
     regex: {
+        /**
+         * @type {RegExp}
+         */
         command: RegExp;
+        /**
+         * @type {RegExp}
+         */
         arguments: RegExp;
+        /**
+         * @type {number[]}
+         */
         argumentIndexes: number[];
+        /**
+         * @type {boolean}
+         */
         argsOptional: boolean;
     };
-    /**
-     * @type {{command: string, arguments: {_: string, d: string, optional: boolean}[], flags: string[]}}
-     */
     description: {
+        /**
+         * @type {string}
+         */
         command: string;
-        arguments: {
-            _: string;
-            d: string;
-            optional: boolean;
-        }[];
+        /**
+         * @type {string[]}
+         */
+        arguments: string[];
+        /**
+         * @type {string[]}
+         */
         flags: string[];
     };
     /**
      *
-     * @returns {{command: string, arguments: {_: string, d: string, optional: boolean}[], flags: {_: string, d: string, optional: boolean}[]}}
+     * @returns
      */
     getDescription(): {
+        /**
+         * @type {string}
+         */
         command: string;
-        arguments: {
-            _: string;
-            d: string;
-            optional: boolean;
-        }[];
-        flags: {
-            _: string;
-            d: string;
-            optional: boolean;
-        }[];
+        /**
+         * @type {string[]}
+         */
+        arguments: string[];
+        /**
+         * @type {string[]}
+         */
+        flags: string[];
     };
     /**
      *
      * @param {string} desc
-     * @returns {Command}
+     * @returns
      */
     setCommandDescription(desc: string): Command;
     /**
@@ -80,7 +105,7 @@ declare class Command {
      * @param {string} name
      * @param {string} desc
      * @param {boolean} optional
-     * @returns {Command}
+     * @returns
      */
     setArgumentDescription(index: number, name: string, desc: string, optional?: boolean): Command;
     /**
@@ -89,80 +114,80 @@ declare class Command {
      * @param {string} name
      * @param {string} desc
      * @param {boolean} optional
-     * @returns {Command}
+     * @returns
      */
     setFlagDescription(index: number, name: string, desc: string, optional?: boolean): Command;
     /**
      *
-     * @param {Discord.Message} message
-     * @param {MessageData} data
-     * @returns {Promise<Output>}
+     * @param {import('discord.js').Message} message
+     * @param {import('./MessageData')} data
+     * @returns
      */
-    run(message: Discord.Message, data: MessageData): Promise<Output>;
+    run(message: import('discord.js').Message, data: import('./MessageData')): Promise<import("./Output")>;
     /**
      *
      * @param {string} key
      * @param {*} value
-     * @returns {Command}
+     * @returns
      */
     setSetting(key: string, value: any): Command;
     /**
      *
      * @param {string} key
-     * @returns {*}
+     * @returns
      */
     getSetting(key: string): any;
     /**
      *
-     * @returns {Command}
+     * @returns
      */
     disable(): Command;
     enabled: boolean;
     /**
      *
-     * @returns {Command}
+     * @returns
      */
     setAdminOnly(): Command;
     adminOnly: boolean;
     /**
      *
      * @param  {Command} command
-     * @returns {Command}
+     * @returns
      */
     addSubcommand(name: any, command: Command): Command;
     /**
      *
      * @param {string} name
-     * @returns {Command}
+     * @returns
      */
-    getSubcommand(name: string): Command;
+    getSubcommand(name: string): Command | undefined;
     /**
      *
      * @param {string} name
-     * @returns {Command}
+     * @returns
      */
     setName(name: string): Command;
     name: string;
     /**
      *
-     * @param {function(Discord.Message, MessageData)} func
-     * @returns {Command}
+     * @param {function(Discord.Message, MessageData):Promise<import('./Output')>} func
+     * @returns
      */
-    setFunction(func: (arg0: Discord.Message, arg1: MessageData) => any): Command;
-    func: (arg0: Discord.Message, arg1: MessageData) => any;
+    setFunction(func: (arg0: Discord.Message, arg1: MessageData) => Promise<import('./Output')>): Command;
+    func: (arg0: Discord.Message, arg1: MessageData) => Promise<import('./Output')>;
     /**
      *
      * @param {string} flag
      * @param {string} value
-     * @returns {Command}
+     * @returns
      */
     setFlag(flag: string, value: string): Command;
     /**
      *
      * @param {string} flag
-     * @returns {string}
+     * @returns
      */
-    getFlag(flag: string): string;
+    getFlag(flag: string): any;
     /**
      * @type {string}
      */

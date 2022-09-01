@@ -6,7 +6,8 @@
         "declaration": true,
         "strict": true,
         "outDir": "./lib",
-        "allowJs": true
+        "allowJs": true,
+        "esModuleInterop": true
     },
     "include": ["src/**.*"],
     "exclude": ["node_modules"],

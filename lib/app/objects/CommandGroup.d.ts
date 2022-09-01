@@ -1,18 +1,22 @@
 export = CommandGroup;
 declare class CommandGroup {
-    constructor(name: any);
     /**
      *
-     * @param {Command} command
-     * @returns {CommandGroup}
+     * @param {string} name
      */
-    addCommand(command: Command): CommandGroup;
+    constructor(name: string);
     /**
      *
-     * @returns {Command[]}
+     * @param {import('./Command')} command
+     * @returns
+     */
+    addCommand(command: import('./Command')): CommandGroup;
+    /**
+     *
+     * @returns
      */
     getCommands(): Command[];
-    name: any;
+    name: string;
     /**
      * @type {Command[]}
      */

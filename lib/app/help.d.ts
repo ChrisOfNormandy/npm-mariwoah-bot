@@ -1,9 +1,9 @@
 export = help;
 /**
  *
- * @param {MessageData} data
- * @param {Command[]} list
- * @returns {Promise<Output>}
+ * @param {import('./objects/MessageData')} data
+ * @param {import('./objects/Command')[]} list
+ * @returns
  */
-declare function help(data: MessageData, list: Command[]): Promise<Output>;
+declare function help(data: import('./objects/MessageData'), list: import('./objects/Command')[]): Promise<Output>;
 import Output = require("./objects/Output");

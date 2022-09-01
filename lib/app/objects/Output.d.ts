@@ -8,45 +8,68 @@ declare class Output {
     /**
      *
      * @param  {...any} values
-     * @returns {Output}
+     * @returns
      */
     setValues(...values: any[]): Output;
     values: any[];
     /**
      *
      * @param {Error} error
-     * @returns {Output}
+     * @returns
      */
     setError(error: Error): Output;
-    error: Error | null;
+    error: Error;
     /**
      *
-     * @returns {Error[]}
+     * @returns
      */
-    getErrors(): Error[];
+    getErrors(): Error;
     /**
      *
-     * @returns {any[]}
+     * @returns
      */
-    getContent(): any[];
+    getContent(): {
+        content: string;
+        embeds: import("discord.js").APIEmbed[];
+        files: any[];
+    };
     /**
      *
      * @param {string} key
      * @param {*} value
+     * @returns
      */
     setOption(key: string, value: any): Output;
     /**
      *
      * @param {string} key
-     * @returns {*}
+     * @returns
      */
     getOption(key: string): any;
     /**
      *
-     * @param  {...Discord.MessageEmbed} embeds
+     * @param  {...import("../handlers/embed-handler").MessageEmbed} embeds
+     * @returns
      */
-    addEmbed(...embeds: Discord.MessageEmbed[]): Output;
-    embeds: any[];
+    addEmbed(...embeds: import("../handlers/embed-handler").MessageEmbed[]): Output;
+    embeds: import("discord.js").APIEmbed[];
+    addFile(...files: any[]): Output;
+    files: any[];
+    resolve(): Promise<Output>;
+    reject(): Promise<never>;
+    /**
+     *
+     * @param {function(*):void} fn `Promise.resolve` or `Promise.reject`
+     * @returns
+     */
+    handleAsync(fn: (arg0: any) => void): void;
+    /**
+     *
+     * @param {Error} err
+     * @param {function(*):void} reject
+     * @returns
+     */
+    handleCatch(err: Error, reject: (arg0: any) => void): void;
     content: any[];
     /**
      * @type {Map<string, *>}

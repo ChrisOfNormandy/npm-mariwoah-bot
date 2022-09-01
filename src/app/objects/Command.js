@@ -1,7 +1,7 @@
 class Command {
     /**
      * 
-     * @returns {string}
+     * @returns
      */
     getGroup() {
         return this.group;
@@ -9,7 +9,7 @@ class Command {
 
     /**
      * 
-     * @returns {{command: RegExp, arguments: RegExp, argumentIndexes: number[], argsOptional: boolean}}
+     * @returns
      */
     getRegex() {
         return this.regex;
@@ -21,12 +21,9 @@ class Command {
      * @param {RegExp} args 
      * @param {number[]} indexes 
      * @param {boolean} optional 
-     * @returns {Command}
+     * @returns
      */
     setRegex(command, args = null, indexes = [], optional = false) {
-        /**
-         * @type {{command: RegExp, arguments: RegExp, argumentIndexes: number[], argsOptional: boolean}}
-         */
         this.regex = {
             command: command,
             arguments: args,
@@ -34,9 +31,6 @@ class Command {
             argsOptional: optional
         };
 
-        /**
-         * @type {{command: string, arguments: {_: string, d: string, optional: boolean}[], flags: string[]}}
-         */
         this.description = {
             command: '',
             arguments: [],
@@ -48,7 +42,7 @@ class Command {
 
     /**
      * 
-     * @returns {{command: string, arguments: {_: string, d: string, optional: boolean}[], flags: {_: string, d: string, optional: boolean}[]}}
+     * @returns
      */
     getDescription() {
         return this.description;
@@ -57,7 +51,7 @@ class Command {
     /**
      * 
      * @param {string} desc 
-     * @returns {Command}
+     * @returns 
      */
     setCommandDescription(desc) {
         this.description.command = desc;
@@ -71,7 +65,7 @@ class Command {
      * @param {string} name 
      * @param {string} desc 
      * @param {boolean} optional 
-     * @returns {Command}
+     * @returns
      */
     setArgumentDescription(index, name, desc, optional = false) {
         this.description.arguments[index] = {
@@ -89,7 +83,7 @@ class Command {
      * @param {string} name 
      * @param {string} desc 
      * @param {boolean} optional 
-     * @returns {Command}
+     * @returns
      */
     setFlagDescription(index, name, desc, optional = true) {
         this.description.flags[index] = {
@@ -103,9 +97,9 @@ class Command {
 
     /**
      * 
-     * @param {Discord.Message} message 
-     * @param {MessageData} data 
-     * @returns {Promise<Output>}
+     * @param {import('discord.js').Message} message 
+     * @param {import('./MessageData')} data 
+     * @returns
      */
     run(message, data) {
         return this.func(message, data);
@@ -115,7 +109,7 @@ class Command {
      * 
      * @param {string} key 
      * @param {*} value 
-     * @returns {Command}
+     * @returns
      */
     setSetting(key, value) {
         this.settings.set(key, value);
@@ -126,7 +120,7 @@ class Command {
     /**
      * 
      * @param {string} key 
-     * @returns {*}
+     * @returns
      */
     getSetting(key) {
         return this.settings.get(key);
@@ -134,7 +128,7 @@ class Command {
 
     /**
      * 
-     * @returns {Command}
+     * @returns
      */
     disable() {
         this.enabled = false;
@@ -144,7 +138,7 @@ class Command {
 
     /**
      * 
-     * @returns {Command}
+     * @returns
      */
     setAdminOnly() {
         this.adminOnly = true;
@@ -155,7 +149,7 @@ class Command {
     /**
      * 
      * @param  {Command} command 
-     * @returns {Command}
+     * @returns
      */
     addSubcommand(name, command) {
         this.subcommands.set(name, command.setName(name));
@@ -166,7 +160,7 @@ class Command {
     /**
      * 
      * @param {string} name 
-     * @returns {Command}
+     * @returns
      */
     getSubcommand(name) {
         return this.subcommands.get(name);
@@ -175,7 +169,7 @@ class Command {
     /**
      * 
      * @param {string} name 
-     * @returns {Command}
+     * @returns
      */
     setName(name) {
         this.name = name;
@@ -185,8 +179,8 @@ class Command {
 
     /**
      * 
-     * @param {function(Discord.Message, MessageData)} func
-     * @returns {Command}
+     * @param {function(Discord.Message, MessageData):Promise<import('./Output')>} func
+     * @returns
      */
     setFunction(func) {
         this.func = func;
@@ -198,7 +192,7 @@ class Command {
      * 
      * @param {string} flag 
      * @param {string} value 
-     * @returns {Command}
+     * @returns
      */
     setFlag(flag, value) {
         this.flags.set(flag, value);
@@ -209,7 +203,7 @@ class Command {
     /**
      * 
      * @param {string} flag 
-     * @returns {string}
+     * @returns
      */
     getFlag(flag) {
         return this.flags.get(flag);
@@ -217,34 +211,55 @@ class Command {
 
     /**
      * 
-     * @param {string} group 
-     * @param {function(Discord.Message, MessageData)} func
+     * @param {string} group
+     * @param {string} name 
+     * @param {function(import('discord.js').Message, import('./MessageData'))} func
      */
-    constructor(group = undefined, func = () => { }) {
+    constructor(group = undefined, name = undefined, func = () => { }) {
         /**
          * @type {string}
          */
         this.group = group;
         /**
-         * @type {function(Discord.Message, MessageData)}
+         * @type {string}
+         */
+        this.name = name;
+        /**
+         * @type {function(Discord.Message, MessageData):Promise<import('./Output')>}
          */
         this.func = func;
 
-        /**
-         * @type {string}
-         */
-        this.name = undefined;
-
         this.regex = {
+            /**
+             * @type {RegExp}
+             */
             command: undefined,
+            /**
+             * @type {RegExp}
+             */
             arguments: undefined,
+            /**
+             * @type {number[]}
+             */
             argumentIndexes: undefined,
+            /**
+             * @type {boolean}
+             */
             argsOptional: undefined
         };
 
         this.description = {
+            /**
+             * @type {string}
+             */
             command: undefined,
+            /**
+             * @type {string[]}
+             */
             arguments: undefined,
+            /**
+             * @type {string[]}
+             */
             flags: undefined
         };
 

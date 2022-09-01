@@ -2,14 +2,13 @@ export = MessageData;
 declare class MessageData {
     /**
      *
-     * @param {Discord.Client} client
+     * @param {import('./Bot')} bot
      * @param {string} content
-     * @param {Discord.GuildMember} member
-     * @param {string} prefix
-     * @param {Output} ingest
-     * @param {MessageData} ingestData
+     * @param {import('discord.js').GuildMember} member
+     * @param {import('./Output')} ingest
+     * @param {import('./MessageData')} ingestData
      */
-    constructor(client: Discord.Client, content: string, member: Discord.GuildMember, prefix?: string, ingest?: Output, ingestData?: MessageData);
+    constructor(bot: import('./Bot'), content: string, member: import('discord.js').GuildMember, ingest?: import('./Output'), ingestData?: import('./MessageData'));
     /**
      *
      * @param {string} content
@@ -39,8 +38,7 @@ declare class MessageData {
      * @param {string} content
      */
     setContent(content: string): void;
-    client: Discord.Client;
-    prefix: string;
+    bot: import("./Bot");
     variables: any[];
     mentions: any[];
     roles: any[];
@@ -48,8 +46,8 @@ declare class MessageData {
     flags: Map<any, any>;
     vars: Map<any, any>;
     outputs: string[];
-    admin: any;
+    admin: boolean;
     hasData: boolean;
-    ingest: Output;
+    ingest: import("./Output");
     pipedCommand: string | null;
 }

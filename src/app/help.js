@@ -1,16 +1,17 @@
-const Discord = require('discord.js');
+const { chat, embed } = require('./handlers');
 const Output = require('./objects/Output');
 
-const { colors } = require('./handlers').chat;
+const { colors } = chat;
+const { MessageEmbed } = embed;
 
 /**
- * 
- * @param {MessageData} data 
- * @param {Command[]} list
- * @returns {Promise<Output>}
+ *
+ * @param {import('./objects/MessageData')} data
+ * @param {import('./objects/Command')[]} list
+ * @returns
  */
 function help(data, list) {
-    const embed = new Discord.MessageEmbed()
+    const embed = new MessageEmbed()
         .setColor(colors.information);
 
     if (data.arguments.length) {
@@ -54,7 +55,7 @@ function help(data, list) {
                             });
 
                             field += `**Arguments**\n ${msg}`;
-                            embed.setFooter({ text: 'Arguments in italics are optional.' });
+                            embed.makeFooter('Arguments in italics are optional.');
                         }
 
                         // Command flag list.
@@ -75,14 +76,13 @@ function help(data, list) {
                             field += `**Flags**\n ${msg}`;
                         }
 
-                        embed.addField(`__${sc.name}__`, field, true);
+                        embed.makeField(`__${sc.name}__`, field, true);
                     });
                 }
                 else {
-                    embed.addField('Description', cmd.getDescription().command || 'No description provided.');
-
-                    // Command syntax.
-                    embed.addField('Syntax', `${data.prefix}${cmd.getRegex().command.source.replace(/[/()]/g, '').split(/[|]/g)[0]}`);
+                    embed
+                        .makeField('Description', cmd.getDescription().command || 'No description provided.')
+                        .makeField('Syntax', `${data.prefix}${cmd.getRegex().command.source.replace(/[/()]/g, '').split(/[|]/g)[0]}`);                     // Command syntax.
 
                     let desc = cmd.getDescription();
 
@@ -101,8 +101,8 @@ function help(data, list) {
                                 msg += '\n';
                         });
 
-                        embed.addField('Arguments', msg);
-                        embed.setFooter({ text: 'Arguments in italics are optional.' });
+                        embed.makeField('Arguments', msg)
+                            .makeFooter('Arguments in italics are optional.');
                     }
 
                     // Command flag list.
@@ -116,7 +116,7 @@ function help(data, list) {
                                 msg += '\n';
                         });
 
-                        embed.addField('Flags', msg);
+                        embed.makeField('Flags', msg);
                     }
                 }
             });
@@ -169,11 +169,11 @@ function help(data, list) {
                         }
                     }
 
-                    embed.addField(g, msg, true);
+                    embed.makeField(g, msg, true);
                 });
             }
             else
-                embed.addField('Oops!', `Could not find a command or group matching "${command}".`);
+                embed.makeField('Oops!', `Could not find a command or group matching "${command}".`);
         }
     }
     else {
@@ -227,11 +227,14 @@ function help(data, list) {
                     msg += '\n';
             }
 
-            embed.addField(g, msg, true);
+            embed.makeField(g, msg, true);
         });
     }
 
-    return Promise.resolve(new Output({ embeds: [embed] }).setValues(list));
+    return new Output()
+        .addEmbed(embed)
+        .setValues(list)
+        .resolve();
 }
 
 module.exports = help;

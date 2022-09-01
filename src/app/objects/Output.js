@@ -1,8 +1,8 @@
 class Output {
     /**
-     * 
-     * @param  {...any} values 
-     * @returns {Output}
+     *
+     * @param  {...any} values
+     * @returns
      */
     setValues(...values) {
         this.values = values;
@@ -11,9 +11,9 @@ class Output {
     }
 
     /**
-     * 
-     * @param {Error} error 
-     * @returns {Output}
+     *
+     * @param {Error} error
+     * @returns
      */
     setError(error) {
         this.error = error;
@@ -22,27 +22,30 @@ class Output {
     }
 
     /**
-     * 
-     * @returns {Error[]}
+     *
+     * @returns
      */
     getErrors() {
         return this.error;
     }
 
     /**
-     * 
-     * @returns {any[]}
+     *
+     * @returns
      */
     getContent() {
-        return (this.error !== null && this.error.message !== undefined)
-            ? [this.error.message]
-            : this.content.concat({ embeds: this.embeds }) || [{ embeds: this.embeds }];
+        return {
+            content: this.content.filter((v) => typeof v !== 'object').join('\n'),
+            embeds: this.embeds,
+            files: this.files
+        };
     }
 
     /**
-     * 
-     * @param {string} key 
-     * @param {*} value 
+     *
+     * @param {string} key
+     * @param {*} value
+     * @returns
      */
     setOption(key, value) {
         this.options.set(key, value);
@@ -51,33 +54,76 @@ class Output {
     }
 
     /**
-     * 
+     *
      * @param {string} key
-     * @returns {*}
+     * @returns
      */
     getOption(key) {
         return this.options.get(key);
     }
 
     /**
-     * 
-     * @param  {...Discord.MessageEmbed} embeds 
+     *
+     * @param  {...import("../handlers/embed-handler").MessageEmbed} embeds
+     * @returns
      */
     addEmbed(...embeds) {
-        this.embeds = this.embeds.concat(embeds);
+        this.embeds = [...this.embeds, ...embeds.map((e) => e.build())];
 
         return this;
     }
 
+    addFile(...files) {
+        this.files = [...this.files, ...files];
+
+        return this;
+    }
+
+    resolve() {
+        return Promise.resolve(this);
+    }
+
+    reject() {
+        return Promise.reject(this);
+    }
+
     /**
-     * 
-     * @param  {...any} content 
+     *
+     * @param {function(*):void} fn `Promise.resolve` or `Promise.reject`
+     * @returns
+     */
+    handleAsync(fn) {
+        return fn(this);
+    }
+
+    /**
+     *
+     * @param {Error} err
+     * @param {function(*):void} reject
+     * @returns
+     */
+    handleCatch(err, reject) {
+        this.setError(err);
+
+        return this.handleAsync(reject);
+    }
+
+    /**
+     *
+     * @param  {...any} content
      */
     constructor(...content) {
         this.content = content;
+        /**
+         * @type {Error}
+         */
         this.error = null;
         this.values = [];
+        /**
+         * @type {import("discord.js").APIEmbed[]}
+         */
         this.embeds = [];
+        this.files = [];
 
         /**
          * @type {Map<string, *>}

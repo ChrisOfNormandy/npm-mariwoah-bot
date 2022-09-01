@@ -1,37 +1,35 @@
+/**
+ *
+ * @param {Array} array
+ * @param {number} size
+ * @returns
+ */
 function divideArray(array, size) {
-    if (!array.length)
-        return Promise.reject(array);
+    if (array.length < 2 || array.length <= size)
+        return array;
 
-    if (array.length <= size)
-        return Promise.resolve([array]);
+    let toReturn = [];
 
-    return new Promise((resolve) => {
-        let arraySize = Math.ceil(array.length / size);
-        let toReturn = new Array(arraySize);
+    let i = 0;
+    while (i < array.length) {
+        if (i + size < array.length)
+            toReturn.push(array.slice(i, i + size));
+        else
+            toReturn.push(array.slice(i));
 
-        for (let i = 0; i < arraySize; i++) {
-            if (i < arraySize - 1)
-                toReturn[i] = new Array(size);
-            else
-                toReturn[i] = new Array(array.length % size);
+        i += size;
+    }
 
-            for (let k = size * i; k < size * (i + 1); k++) {
-                if (array[k])
-                    toReturn[i][k - size * i] = array[k];
-            }
-        }
-
-        resolve(toReturn);
-    });
+    return toReturn;
 }
 
 /**
- * 
- * @param {*[]} array 
- * @returns {*[]}
+ *
+ * @param {Array} array
+ * @returns
  */
 function shuffle(array) {
-    if (!array.length)
+    if (array.length < 2)
         return array;
 
     let j;
@@ -46,31 +44,9 @@ function shuffle(array) {
 }
 
 /**
- * 
- * @param {*[]} array 
- * @returns {Promise<*[]>}
- */
-function shuffleAsync(array) {
-    if (!array.length)
-        return Promise.reject(array);
-
-    return new Promise((resolve) => {
-        let j;
-        const arr = array;
-
-        for (let i = arr.length - 1; i > 0; i--) {
-            j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-
-        resolve(arr);
-    });
-}
-
-/**
- * 
- * @param {Map<*, *>} map 
- * @returns {object}
+ *
+ * @param {Map<*, *>} map
+ * @returns {Object.<string, *>}
  */
 function mapToJson(map) {
     let obj = {};
@@ -83,6 +59,5 @@ function mapToJson(map) {
 module.exports = {
     divideArray,
     shuffle,
-    shuffleAsync,
     mapToJson
 };

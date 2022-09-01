@@ -14,8 +14,8 @@ const pipedCommandRegex = /(.+?)\s\|\s(.+)/;
 
 class MessageData {
     /**
-     * 
-     * @param {string} content 
+     *
+     * @param {string} content
      */
     build(content) {
         let str = content;
@@ -76,50 +76,48 @@ class MessageData {
     }
 
     /**
-     * 
-     * @param  {...string} args 
+     *
+     * @param  {...string} args
      */
     setArguments(...args) {
         this.arguments = args;
     }
 
     /**
-     * 
-     * @param {string} cmd 
+     *
+     * @param {string} cmd
      */
     setCommand(cmd) {
         this.command = cmd;
     }
 
     /**
-     * 
-     * @param {string} sCmd 
+     *
+     * @param {string} sCmd
      */
     setSubcommand(sCmd) {
         this.subcommand = sCmd;
     }
 
     /**
-     * 
-     * @param {string} content 
+     *
+     * @param {string} content
      */
     setContent(content) {
         this.content = content;
     }
 
     /**
-     * 
-     * @param {Discord.Client} client 
-     * @param {string} content 
-     * @param {Discord.GuildMember} member 
-     * @param {string} prefix 
-     * @param {Output} ingest
-     * @param {MessageData} ingestData
+     *
+     * @param {import('./Bot')} bot
+     * @param {string} content
+     * @param {import('discord.js').GuildMember} member
+     * @param {import('./Output')} ingest
+     * @param {import('./MessageData')} ingestData
      */
-    constructor(client, content, member, prefix = '/', ingest = undefined, ingestData = undefined) {
-        this.client = client;
+    constructor(bot, content, member, ingest = undefined, ingestData = undefined) {
+        this.bot = bot;
 
-        this.prefix = prefix;
         this.content = content;
 
         this.command = null;
@@ -135,7 +133,7 @@ class MessageData {
         this.vars = new Map();
         this.outputs = [];
 
-        this.admin = member.permissions.has('ADMINISTRATOR');
+        this.admin = member.permissions.has('Administrator');
 
         this.hasData = true;
 

@@ -4,7 +4,7 @@ const groups = require('./groups');
 const help = require('./help');
 
 /**
- * 
+ *
  * @returns {Command[]}
  */
 function getCommandList() {
@@ -13,6 +13,7 @@ function getCommandList() {
     list.push(
         new Command(
             'general',
+            'help',
             (message, data) => help(data, commands.getList())
         )
             .setRegex(/(\?)|(help)/, /\s([\w?]+)/, [1], true)
@@ -34,7 +35,7 @@ const commands = {
     cache: [],
 
     /**
-     * 
+     *
      * @returns {Command[]}
      */
     getList() {

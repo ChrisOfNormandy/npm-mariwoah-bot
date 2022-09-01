@@ -2,23 +2,29 @@ class CommandGroup {
 
     /**
      * 
-     * @param {Command} command 
-     * @returns {CommandGroup}
+     * @param {import('./Command')} command 
+     * @returns
      */
     addCommand(command) {
         this.collection.push(command);
+
+        console.log('Added command:', command.name);
 
         return this;
     }
 
     /**
      * 
-     * @returns {Command[]}
+     * @returns
      */
     getCommands() {
         return this.collection;
     }
 
+    /**
+     * 
+     * @param {string} name 
+     */
     constructor(name) {
         this.name = name;
 

@@ -30,6 +30,16 @@
             "warn",
             "single"
         ],
-        "semi": "warn"
+        "semi": "warn",
+        "no-dupe-keys": "error",
+        "require-jsdoc": "warn",
+        "prefer-arrow-callback": "warn",
+        "no-useless-return": "warn",
+        "no-useless-escape": "warn",
+        "no-useless-constructor": "warn",
+        "no-invalid-this": "warn",
+        "class-methods-use-this": "warn",
+        "no-mixed-spaces-and-tabs": "warn",
+        "no-trailing-spaces": "warn"
     }
 }
