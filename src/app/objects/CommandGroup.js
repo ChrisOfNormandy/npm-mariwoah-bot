@@ -1,8 +1,8 @@
 class CommandGroup {
 
     /**
-     * 
-     * @param {import('./Command')} command 
+     *
+     * @param {import('./Command')} command
      * @returns
      */
     addCommand(command) {
@@ -14,7 +14,7 @@ class CommandGroup {
     }
 
     /**
-     * 
+     *
      * @returns
      */
     getCommands() {
@@ -22,8 +22,8 @@ class CommandGroup {
     }
 
     /**
-     * 
-     * @param {string} name 
+     *
+     * @param {string} name
      */
     constructor(name) {
         this.name = name;

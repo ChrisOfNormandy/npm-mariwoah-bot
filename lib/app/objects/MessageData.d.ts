@@ -38,13 +38,18 @@ declare class MessageData {
      * @param {string} content
      */
     setContent(content: string): void;
+    setVar(key: any, value: any): void;
+    getVar(key: any): any;
+    checkVar(key: any, eq: any): boolean;
+    checkVarNot(key: any, eq: any): boolean;
     bot: import("./Bot");
     variables: any[];
     mentions: any[];
     roles: any[];
     urls: any[];
     flags: Map<any, any>;
-    vars: Map<any, any>;
+    vars: any;
+    indexes: {};
     outputs: string[];
     admin: boolean;
     hasData: boolean;

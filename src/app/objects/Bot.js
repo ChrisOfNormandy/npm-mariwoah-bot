@@ -235,6 +235,10 @@ class Bot {
     constructor(config) {
         this.prefix = '';
         /**
+         * @type {import('./Config').BotConfig}
+         */
+        this.config;
+        /**
          * @type {Client}
          */
         this.client = null;

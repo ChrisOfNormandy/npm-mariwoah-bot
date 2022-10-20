@@ -33,8 +33,8 @@ declare class Bot {
      * @returns
      */
     fromConfig(config: import('./Config').BotConfig): Bot;
-    config: any;
-    startupMessage: any;
+    config: import('./Config').BotConfig;
+    startupMessage: string | undefined;
     /**
      *
      * @param  {...import('discord.js').GatewayIntentBits} intents

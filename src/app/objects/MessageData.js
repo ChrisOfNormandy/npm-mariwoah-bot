@@ -5,12 +5,12 @@ const flagRegex = /\s-[a-zA-Z]+\b/g;
 const userMentionsRegex = /<@!\d{18}>/g;
 const roleMentionsRegex = /<@&\d{18}>/g;
 
-const variableRegex = /\{\w\}/g;
-const variableRegex_ = /\{(\w)\}/;
+const variableRegex = /\{\w+(\[\d+\])?\}/g;
+const variableRegex_ = /\{(\w+)(\[(\d+)\])?\}/;
 
-const varOutputRegex = /(.+?)\s>\s(\w)/;
-
-const pipedCommandRegex = /(.+?)\s\|\s(.+)/;
+const varOutputRegex = /(.+?)\s?>\s?(\w+)/;
+const pipedCommandRegex = /(.+?)\s?\|\s?(.+)/;
+const ternaryRegex = /(.+?)\s?\?\s?(.+?)\s?:\s?(.+?)/
 
 class MessageData {
     /**
@@ -64,11 +64,18 @@ class MessageData {
         const variables = content.match(variableRegex);
         if (variables !== null) {
             for (let v in variables) {
-                let val = variables[v].match(variableRegex_)[1];
+                const m = variables[v].match(variableRegex_);
+
+                let val = m[1];
                 this.variables.push(val);
 
-                if (this.vars.has(val) && this.vars.get(val) !== undefined)
-                    str = str.replace(variables[v], this.vars.get(val));
+                let p = this.getVar(val);
+
+                if (m[3])
+                    p = p[m[3]];
+
+                if (this.checkVarNot(val, null))
+                    str = str.replace(variables[v], p);
             }
         }
 
@@ -107,6 +114,22 @@ class MessageData {
         this.content = content;
     }
 
+    setVar(key, value) {
+        this.vars[key] = value;
+    }
+
+    getVar(key) {
+        return this.vars[key];
+    }
+
+    checkVar(key, eq) {
+        return this.vars[key] === eq;
+    }
+
+    checkVarNot(key, eq) {
+        return this.vars[key] !== eq;
+    }
+
     /**
      *
      * @param {import('./Bot')} bot
@@ -130,7 +153,8 @@ class MessageData {
         this.urls = [];
 
         this.flags = new Map();
-        this.vars = new Map();
+        this.vars = {};
+        this.indexes = {};
         this.outputs = [];
 
         this.admin = member.permissions.has('Administrator');
@@ -141,13 +165,17 @@ class MessageData {
 
         this.pipedCommand = null;
 
-        if (ingestData !== undefined)
-            ingestData.vars.forEach((v, k) => this.vars.set(k, v));
+        if (ingestData) {
+            this.vars = {
+                ...this.vars,
+                ...ingestData.vars
+            };
+        }
 
         let v = this.content.match(varOutputRegex);
         if (v !== null) {
             this.content = this.content.replace(v[0], v[1]);
-            this.vars.set(v[2], undefined);
+            this.setVar(v[2], null);
             this.outputs.push(v[2]);
         }
 
