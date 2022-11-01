@@ -24,7 +24,7 @@ declare class Bot {
      * @param {ActivityType} statusType
      * @returns
      */
-    setStatus(str: string, statusType?: ActivityType): Bot;
+    setStatus(str: string, statusType?: ActivityType, suppressError?: boolean): Bot;
     status: string;
     statusType: ActivityType;
     /**

@@ -6,9 +6,9 @@ const { Pool } = require('pg');
 let pool = null;
 
 /**
- * 
- * @param {{user: string, password: string, host: string, database: string, port: number}} config 
- * @returns 
+ *
+ * @param {{user: string, password: string, host: string, database: string, port: number}} config
+ * @returns
  */
 function login(config) {
     pool = new Pool(config);
@@ -16,6 +16,11 @@ function login(config) {
     return pool;
 }
 
+/**
+ *
+ * @param {*} v
+ * @returns
+ */
 function formatValue(v) {
     switch (typeof v) {
         case 'string': return `'${v}'`;
@@ -23,6 +28,11 @@ function formatValue(v) {
     }
 }
 
+/**
+ *
+ * @param {string} str
+ * @returns
+ */
 function query(str) {
     if (pool === null)
         return Promise.reject(new Error('No connection.'));
@@ -39,6 +49,12 @@ function query(str) {
     });
 }
 
+/**
+ *
+ * @param {string} table
+ * @param {*} options
+ * @returns
+ */
 function select(table, options = {}) {
     let opts = [];
 
@@ -53,8 +69,8 @@ function select(table, options = {}) {
 }
 
 /**
- * 
- * @param {string} table 
+ *
+ * @param {string} table
  * @returns {Promise<boolean>}
  */
 function exists(table) {
@@ -67,10 +83,13 @@ function exists(table) {
 
 /**
  * @typedef {{name: string, dataType: string, primaryKey?: boolean, foreignKey?: {table: string, column: string}, nullable?: boolean, default?: *}} Column
- * 
+ *
  * @typedef {{name: string, columns: Column[]}} Table
  */
 
+/**
+ *
+ */
 function loadTableFromList(list, index) {
     const table = list[index];
 
@@ -120,6 +139,12 @@ function loadTableFromList(list, index) {
     });
 }
 
+/**
+ *
+ * @param {*} list
+ * @param {*} index
+ * @returns
+ */
 function deleteTablesFromList(list, index) {
     const table = list[index];
 
@@ -158,9 +183,9 @@ function deleteTablesFromList(list, index) {
 }
 
 /**
- * 
- * @param {Table[]} tables 
- * @returns 
+ *
+ * @param {Table[]} tables
+ * @returns
  */
 function preloadTables(tables, reset = false) {
     if (!Array.isArray(tables))
@@ -181,6 +206,11 @@ function preloadTables(tables, reset = false) {
     return loadTableFromList(tables, 0);
 }
 
+/**
+ *
+ * @param {*} table
+ * @returns
+ */
 function getPrimaryKey(table) {
     let str = 'SELECT ' +
         'pg_attribute.attname, ' +
@@ -216,8 +246,8 @@ function getPrimaryKey(table) {
 }
 
 /**
- * 
- * @param {string} table 
+ *
+ * @param {string} table
  * @returns {Promise<{table: string, column: string, ref_table: string, ref_column: string}[]>}
  */
 function getForeignKeys(table) {
@@ -259,12 +289,23 @@ function getForeignKeys(table) {
     });
 }
 
+/**
+ *
+ * @param {*} table
+ * @returns
+ */
 function describe(table) {
     let str = `select column_name, data_type, character_maximum_length, column_default, is_nullable from INFORMATION_SCHEMA.COLUMNS where table_name = '${table}'`;
 
     return query(str);
 }
 
+/**
+ *
+ * @param {*} table
+ * @param {*} data
+ * @returns
+ */
 function add(table, data) {
     const keys = Object.keys(data);
     const values = Object.values(data).map((value) => {

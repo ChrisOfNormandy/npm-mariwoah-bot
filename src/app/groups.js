@@ -7,8 +7,8 @@ const groups = {
     cache: new Map(),
 
     /**
-     * 
-     * @param {string} name 
+     *
+     * @param {string} name
      * @returns {CommandGroup}
      */
     addCommandGroup: (name) => {
@@ -19,8 +19,8 @@ const groups = {
     },
 
     /**
-     * 
-     * @param {string} name 
+     *
+     * @param {string} name
      * @returns {CommandGroup}
      */
     getCommandGroup: (name) => {

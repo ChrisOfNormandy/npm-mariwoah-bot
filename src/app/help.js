@@ -82,7 +82,7 @@ function help(data, list) {
                 else {
                     embed
                         .makeField('Description', cmd.getDescription().command || 'No description provided.')
-                        .makeField('Syntax', `${data.prefix}${cmd.getRegex().command.source.replace(/[/()]/g, '').split(/[|]/g)[0]}`);                     // Command syntax.
+                        .makeField('Syntax', `${data.prefix}${cmd.getRegex().command.source.replace(/[/()]/g, '').split(/[|]/g)[0]}`); // Command syntax.
 
                     let desc = cmd.getDescription();
 

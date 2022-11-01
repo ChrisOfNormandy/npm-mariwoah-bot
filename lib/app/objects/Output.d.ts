@@ -21,6 +21,12 @@ declare class Output {
     error: Error;
     /**
      *
+     * @param {string} message
+     * @returns
+     */
+    makeError(message: string): Output;
+    /**
+     *
      * @returns
      */
     getErrors(): Error;
@@ -55,8 +61,18 @@ declare class Output {
     embeds: import("discord.js").APIEmbed[];
     addFile(...files: any[]): Output;
     files: any[];
-    resolve(): Promise<Output>;
-    reject(): Promise<never>;
+    /**
+     *
+     * @param {function(*):void?} fn
+     * @returns
+     */
+    resolve(fn: (arg0: any) => void | null): Promise<Output>;
+    /**
+     *
+     * @param {function(*):void?} fn
+     * @returns
+     */
+    reject(fn: (arg0: any) => void | null): Promise<never>;
     /**
      *
      * @param {function(*):void} fn `Promise.resolve` or `Promise.reject`

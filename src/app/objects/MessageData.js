@@ -1,24 +1,84 @@
-const urlRegex = /(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g;
+const urlRegex = /(https?:\/\/)?(\w+\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g;
 
 const flagRegex = /\s-[a-zA-Z]+\b/g;
 
 const userMentionsRegex = /<@!\d{18}>/g;
 const roleMentionsRegex = /<@&\d{18}>/g;
 
-const variableRegex = /\{\w+(\[\d+\])?\}/g;
-const variableRegex_ = /\{(\w+)(\[(\d+)\])?\}/;
+const variableRegex = /\{\w+(\[[-\d\w.]+\])?\}/g;
+const variableRegex_ = /\{(\w+)(\[([-\d\w.]+)\])?\}/;
 
 const varOutputRegex = /(.+?)\s?>\s?(\w+)/;
 const pipedCommandRegex = /(.+?)\s?\|\s?(.+)/;
-const ternaryRegex = /(.+?)\s?\?\s?(.+?)\s?:\s?(.+?)/
+
+/**
+ *
+ * @param {*} value
+ * @returns
+ */
+function formatVar(value) {
+    if (Array.isArray(value)) {
+        const valueTypes = [...new Set(value.map((v) => typeof v))];
+
+        return `Array<${valueTypes.join('|')}>`;
+    }
+
+    switch (typeof value) {
+        case 'object': {
+            const keys = Object.keys(value);
+
+            const keyTypes = [...new Set(keys.map((v) => typeof v))];
+            const valueTypes = [...new Set(Object.values(value).map((v) => typeof v))];
+
+            return `Object<${keyTypes.join('|')}, ${valueTypes.join('|')}>{${keys.join(', ')}}`;
+        }
+        default: return value;
+    }
+}
 
 class MessageData {
+    handleVars(content, str_) {
+        let str = str_;
+
+        const variables = content.match(variableRegex);
+
+        if (variables !== null) {
+            for (let v in variables) {
+                const m = variables[v].match(variableRegex_);
+
+                let val = m[1];
+                this.variables.push(val);
+
+                let p = this.getVar(val);
+
+                if (m[3]) {
+                    const vars = m[3].split('.');
+                    let pointer = vars.shift();
+
+                    while (pointer !== undefined && p[pointer] !== undefined) {
+                        p = p[pointer];
+
+                        pointer = vars.shift();
+                    }
+                }
+
+                if (this.checkVarNot(val, null))
+                    str = str_.replace(variables[v], formatVar(p));
+            }
+        }
+
+        console.log('handled:', content, str);
+
+        return { content, str };
+    }
+
     /**
      *
      * @param {string} content
      */
-    build(content) {
-        let str = content;
+    build(contentIn) {
+        let { str } = this.handleVars(contentIn, contentIn);
+        let content = str;
 
         let mentions = content.match(userMentionsRegex);
         if (mentions !== null) {
@@ -28,6 +88,8 @@ class MessageData {
             }
         }
 
+        console.log(this.mentions);
+
         let roles = content.match(roleMentionsRegex);
         if (roles !== null) {
             for (let m in roles) {
@@ -36,6 +98,8 @@ class MessageData {
             }
         }
 
+        console.log(this.roles);
+
         const urls = content.match(urlRegex);
         if (urls !== null) {
             for (let url in urls) {
@@ -43,6 +107,8 @@ class MessageData {
                 str = str.replace(urls[url], `<URL:${url}>`);
             }
         }
+
+        console.log(this.urls);
 
         const flags_ = str.match(flagRegex);
         if (flags_ !== null) {
@@ -61,25 +127,11 @@ class MessageData {
             }
         }
 
-        const variables = content.match(variableRegex);
-        if (variables !== null) {
-            for (let v in variables) {
-                const m = variables[v].match(variableRegex_);
+        console.log(this.flags);
 
-                let val = m[1];
-                this.variables.push(val);
+        this.content = this.handleVars(content, str).str;
 
-                let p = this.getVar(val);
-
-                if (m[3])
-                    p = p[m[3]];
-
-                if (this.checkVarNot(val, null))
-                    str = str.replace(variables[v], p);
-            }
-        }
-
-        this.content = str;
+        console.log(this.content);
     }
 
     /**
@@ -134,14 +186,18 @@ class MessageData {
      *
      * @param {import('./Bot')} bot
      * @param {string} content
-     * @param {import('discord.js').GuildMember} member
+     * @param {import('discord.js').Message} message
      * @param {import('./Output')} ingest
      * @param {import('./MessageData')} ingestData
      */
-    constructor(bot, content, member, ingest = undefined, ingestData = undefined) {
+    constructor(bot, content, message, ingest = undefined, ingestData = undefined) {
         this.bot = bot;
 
+        console.log('Got:', content);
+
         this.content = content;
+        this.message = message;
+        const member = message.member;
 
         this.command = null;
         this.subcommand = null;
@@ -191,3 +247,5 @@ class MessageData {
 }
 
 module.exports = MessageData;
+
+// Example: ~say ~ping ? ~say Yes : ~shuffle a,b,c > x | ~say {x}

@@ -23,6 +23,17 @@ class Output {
 
     /**
      *
+     * @param {string} message
+     * @returns
+     */
+    makeError(message) {
+        this.error = new Error(message);
+
+        return this;
+    }
+
+    /**
+     *
      * @returns
      */
     getErrors() {
@@ -79,11 +90,28 @@ class Output {
         return this;
     }
 
-    resolve() {
+    /**
+     *
+     * @param {function(*):void?} fn
+     * @returns
+     */
+    resolve(fn) {
+        if (fn)
+            fn(this);
+
         return Promise.resolve(this);
     }
 
-    reject() {
+    /**
+     *
+     * @param {function(*):void?} fn
+     * @returns
+     */
+    reject(fn) {
+        if (fn)
+            fn(this);
+
+        // eslint-disable-next-line prefer-promise-reject-errors
         return Promise.reject(this);
     }
 

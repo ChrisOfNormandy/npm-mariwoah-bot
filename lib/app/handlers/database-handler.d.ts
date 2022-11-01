@@ -25,14 +25,31 @@ export function login(config: {
     database: string;
     port: number;
 }): Pool;
-export function query(str: any): Promise<any>;
-export function select(table: any, options?: {}): Promise<any>;
+/**
+ *
+ * @param {string} str
+ * @returns
+ */
+export function query(str: string): Promise<any>;
+/**
+ *
+ * @param {string} table
+ * @param {*} options
+ * @returns
+ */
+export function select(table: string, options?: any): Promise<any>;
 /**
  *
  * @param {string} table
  * @returns {Promise<boolean>}
  */
 export function exists(table: string): Promise<boolean>;
+/**
+ *
+ * @param {*} table
+ * @param {*} data
+ * @returns
+ */
 export function add(table: any, data: any): Promise<any>;
 /**
  *
@@ -40,7 +57,17 @@ export function add(table: any, data: any): Promise<any>;
  * @returns
  */
 export function preloadTables(tables: Table[], reset?: boolean): Promise<any>;
+/**
+ *
+ * @param {*} table
+ * @returns
+ */
 export function describe(table: any): Promise<any>;
+/**
+ *
+ * @param {*} table
+ * @returns
+ */
 export function getPrimaryKey(table: any): Promise<any>;
 /**
  *

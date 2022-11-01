@@ -1,13 +1,18 @@
 /**
- * 
- * @param {number} timestamp 
- * @returns 
+ *
+ * @param {number} timestamp
+ * @returns
  */
 function timestampToDate(timestamp) {
     return new Date(timestamp);
 }
 
-// Gets the age of a message by comparing original (a) to current (b)
+/**
+ * Gets the age of a message by comparing original (a) to current (b)
+ * @param {Date} a
+ * @param {Date} b
+ * @returns
+ */
 function age_days(a, b) {
     const ms = 1000 * 60 * 60 * 24;
 
@@ -17,6 +22,12 @@ function age_days(a, b) {
     return Math.floor((utc2 - utc1) / ms);
 }
 
+/**
+ *
+ * @param {Date} a
+ * @param {Date} b
+ * @returns
+ */
 function age_hours(a, b) {
     const ms = 1000 * 60 * 60;
 
@@ -26,6 +37,12 @@ function age_hours(a, b) {
     return Math.floor((utc2 - utc1) / ms) % 24;
 }
 
+/**
+ *
+ * @param {Date} a
+ * @param {Date} b
+ * @returns
+ */
 function age_minutes(a, b) {
     const ms = 1000 * 60;
 
@@ -35,6 +52,12 @@ function age_minutes(a, b) {
     return Math.floor((utc2 - utc1) / ms) % 60;
 }
 
+/**
+ *
+ * @param {Date} a
+ * @param {Date} b
+ * @returns
+ */
 function age_seconds(a, b) {
     const ms = 1000;
 
@@ -44,6 +67,12 @@ function age_seconds(a, b) {
     return Math.floor((utc2 - utc1) / ms) % 60;
 }
 
+/**
+ *
+ * @param {Date} a
+ * @param {Date} b
+ * @returns
+ */
 function age_milliseconds(a, b) {
     const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate(), a.getHours(), a.getMinutes(), a.getSeconds(), a.getMilliseconds());
     const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate(), b.getHours(), a.getMinutes(), b.getSeconds(), b.getMilliseconds());
@@ -52,10 +81,10 @@ function age_milliseconds(a, b) {
 }
 
 /**
- * 
- * @param {Date} old 
- * @param {Date} current 
- * @returns 
+ *
+ * @param {Date} old
+ * @param {Date} current
+ * @returns
  */
 function getTimestamp(old, current) {
     return {
@@ -68,9 +97,9 @@ function getTimestamp(old, current) {
 }
 
 /**
- * 
- * @param {number} seconds 
- * @returns 
+ *
+ * @param {number} seconds
+ * @returns
  */
 function intToTimeString(seconds) {
     let sec = seconds % 60;
@@ -87,7 +116,7 @@ function intToTimeString(seconds) {
         seconds: sec,
         minutes: min,
         hour: hour,
-        string: `${(hour > 0)
+        string: `${hour > 0
             ? hour + ':'
             : ''}${min}:${sec}`,
         timestamp: seconds

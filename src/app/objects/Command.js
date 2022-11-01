@@ -1,6 +1,6 @@
 class Command {
     /**
-     * 
+     *
      * @returns
      */
     getGroup() {
@@ -8,7 +8,7 @@ class Command {
     }
 
     /**
-     * 
+     *
      * @returns
      */
     getRegex() {
@@ -16,11 +16,11 @@ class Command {
     }
 
     /**
-     * 
-     * @param {RegExp} command 
-     * @param {RegExp} args 
-     * @param {number[]} indexes 
-     * @param {boolean} optional 
+     *
+     * @param {RegExp} command
+     * @param {RegExp} args
+     * @param {number[]} indexes
+     * @param {boolean} optional
      * @returns
      */
     setRegex(command, args = null, indexes = [], optional = false) {
@@ -41,7 +41,7 @@ class Command {
     }
 
     /**
-     * 
+     *
      * @returns
      */
     getDescription() {
@@ -49,9 +49,9 @@ class Command {
     }
 
     /**
-     * 
-     * @param {string} desc 
-     * @returns 
+     *
+     * @param {string} desc
+     * @returns
      */
     setCommandDescription(desc) {
         this.description.command = desc;
@@ -60,11 +60,11 @@ class Command {
     }
 
     /**
-     * 
-     * @param {number} index 
-     * @param {string} name 
-     * @param {string} desc 
-     * @param {boolean} optional 
+     *
+     * @param {number} index
+     * @param {string} name
+     * @param {string} desc
+     * @param {boolean} optional
      * @returns
      */
     setArgumentDescription(index, name, desc, optional = false) {
@@ -78,11 +78,11 @@ class Command {
     }
 
     /**
-     * 
-     * @param {number} index 
-     * @param {string} name 
-     * @param {string} desc 
-     * @param {boolean} optional 
+     *
+     * @param {number} index
+     * @param {string} name
+     * @param {string} desc
+     * @param {boolean} optional
      * @returns
      */
     setFlagDescription(index, name, desc, optional = true) {
@@ -96,19 +96,18 @@ class Command {
     }
 
     /**
-     * 
-     * @param {import('discord.js').Message} message 
-     * @param {import('./MessageData')} data 
+     *
+     * @param {import('./MessageData')} data
      * @returns
      */
-    run(message, data) {
-        return this.func(message, data);
+    run(data) {
+        return this.func(data);
     }
 
     /**
-     * 
-     * @param {string} key 
-     * @param {*} value 
+     *
+     * @param {string} key
+     * @param {*} value
      * @returns
      */
     setSetting(key, value) {
@@ -118,8 +117,8 @@ class Command {
     }
 
     /**
-     * 
-     * @param {string} key 
+     *
+     * @param {string} key
      * @returns
      */
     getSetting(key) {
@@ -127,7 +126,7 @@ class Command {
     }
 
     /**
-     * 
+     *
      * @returns
      */
     disable() {
@@ -137,7 +136,7 @@ class Command {
     }
 
     /**
-     * 
+     *
      * @returns
      */
     setAdminOnly() {
@@ -147,8 +146,8 @@ class Command {
     }
 
     /**
-     * 
-     * @param  {Command} command 
+     *
+     * @param  {Command} command
      * @returns
      */
     addSubcommand(name, command) {
@@ -158,8 +157,8 @@ class Command {
     }
 
     /**
-     * 
-     * @param {string} name 
+     *
+     * @param {string} name
      * @returns
      */
     getSubcommand(name) {
@@ -167,8 +166,8 @@ class Command {
     }
 
     /**
-     * 
-     * @param {string} name 
+     *
+     * @param {string} name
      * @returns
      */
     setName(name) {
@@ -178,8 +177,8 @@ class Command {
     }
 
     /**
-     * 
-     * @param {function(Discord.Message, MessageData):Promise<import('./Output')>} func
+     *
+     * @param {function(MessageData):Promise<import('./Output')>} func
      * @returns
      */
     setFunction(func) {
@@ -189,9 +188,9 @@ class Command {
     }
 
     /**
-     * 
-     * @param {string} flag 
-     * @param {string} value 
+     *
+     * @param {string} flag
+     * @param {string} value
      * @returns
      */
     setFlag(flag, value) {
@@ -201,8 +200,8 @@ class Command {
     }
 
     /**
-     * 
-     * @param {string} flag 
+     *
+     * @param {string} flag
      * @returns
      */
     getFlag(flag) {
@@ -210,10 +209,10 @@ class Command {
     }
 
     /**
-     * 
+     *
      * @param {string} group
-     * @param {string} name 
-     * @param {function(import('discord.js').Message, import('./MessageData'))} func
+     * @param {string} name
+     * @param {function(import('./MessageData'))} func
      */
     constructor(group = undefined, name = undefined, func = () => { }) {
         /**
@@ -225,7 +224,7 @@ class Command {
          */
         this.name = name;
         /**
-         * @type {function(Discord.Message, MessageData):Promise<import('./Output')>}
+         * @type {function(import('./MessageData')):Promise<import('./Output')>}
          */
         this.func = func;
 

@@ -4,6 +4,30 @@ const MessageData = require('../objects/MessageData');
 
 /**
  *
+ * @param {import('../objects/Command')} cmd
+ * @param {MessageData} data
+ * @returns
+ */
+function handleCommand(cmd, data) {
+    return new Promise((resolve, reject) => {
+        cmd.func(data)
+            .then((output) => {
+                data.outputs.forEach((v) => data.setVar(v, output.values[output.values[data.indexes[v]] || 0]));
+
+                if (data.pipedCommand !== null) {
+                    parseString(data.bot, data.pipedCommand, data.message, output, data)
+                        .then(resolve)
+                        .catch(reject);
+                }
+                else
+                    resolve(output);
+            })
+            .catch(reject);
+    });
+}
+
+/**
+ *
  * @param {import('../objects/Bot')} bot
  * @param {string} content
  * @param {import('discord.js').Message} message
@@ -23,9 +47,10 @@ function parseString(bot, content, message, ingest = undefined, ingestData = und
             .setError(new Error('Valid commands length was 0.'))
             .reject();
 
-    let index = 0, finished = false;
+    let index = 0,
+        finished = false;
 
-    let data = new MessageData(bot, content, message.member, ingest, ingestData);
+    let data = new MessageData(bot, content, message, ingest, ingestData);
 
     let regex, commandStringRegex, subCommandRegex, str;
 
@@ -40,19 +65,18 @@ function parseString(bot, content, message, ingest = undefined, ingestData = und
                 subCommandRegex = `${Array.from(validCommands[index].subcommands.keys()).map((sc) => { return `(\\s(${sc}))`; }).join('|')}`;
                 commandStringRegex += subCommandRegex;
             }
-            else {
-                if (regex.arguments)
-                    commandStringRegex += `(${regex.arguments.source})${regex.argsOptional
-                        ? '?'
-                        : ''
-                        }`;
-            }
+            else if (regex.arguments)
+                commandStringRegex += `(${regex.arguments.source})${regex.argsOptional
+                    ? '?'
+                    : ''
+                    }`;
         }
 
         let commandRegex = new RegExp(commandStringRegex);
 
         if (!commandRegex.test(data.content)) {
             index++;
+
             continue;
         }
         else {
@@ -61,6 +85,7 @@ function parseString(bot, content, message, ingest = undefined, ingestData = und
 
             // Fetch and remove command.
             const c = str.match(regex.command);
+
             str = str.replace(c[0], '');
             data.setCommand(c[0]);
 
@@ -73,6 +98,7 @@ function parseString(bot, content, message, ingest = undefined, ingestData = und
 
                     if (sc !== null) {
                         str = str.replace(sc[0], '');
+
                         data.setSubcommand(
                             sc.filter((x) => { return x !== undefined && x !== sc[0]; })[0]
                         );
@@ -128,7 +154,7 @@ function parseString(bot, content, message, ingest = undefined, ingestData = und
                     .setError(new Error('Command not enabled.'))
                     .reject();
 
-            if (!!validCommands[index].adminOnly && !data.admin)
+            if (validCommands[index].adminOnly && !data.admin)
                 return new Output()
                     .setOption('output', false)
                     .setError(new Error('User lacks admin permissions.'))
@@ -137,72 +163,36 @@ function parseString(bot, content, message, ingest = undefined, ingestData = und
             if (bot.config.settings.dev.enabled)
                 console.log('Command:', validCommands[index]);
 
-            return new Promise((resolve, reject) => {
-                validCommands[index].func(message, data)
-                    .then((output) => {
-                        data.outputs.forEach((v) => {
-                            data.setVar(v, output.values[output.values[data.indexes[v]] || 0]);
-                        });
-
-                        if (data.pipedCommand !== null) {
-                            parseString(bot, data.pipedCommand, message, output, data)
-                                .then((response) => resolve(response))
-                                .catch((err) => reject(err));
-                        }
-                        else
-                            resolve(output);
-                    })
-                    .catch((err) => reject(err));
-            });
+            return handleCommand(validCommands[index], data);
         }
     }
 
     return new Output()
         .setOption('output', false)
-        .setError(new Error('Failed to parse.'))
+        .setError(new Error('Failed to parse: ' + content))
         .reject();
 }
 
 /**
  *
- * @param {Error} err
+ * @param {Output} err
  * @param {import('discord.js').Message} message
  * @param {*} options
  * @param {function(*):void} reject
  */
 function onParseError(err, message, options, reject) {
-    if (err.error === null) {
-        err.getContent().forEach((msg) => {
-            if (msg)
-                message.channel.send(msg);
-        });
+    if (err) {
+        const errors = err.getErrors
+            ? err.getErrors()
+            : err;
+
+        message.channel.send(errors.message);
 
         if (options.devEnabled)
-            reject(err.getErrors());
-        else
-            reject(null);
+            return reject(errors);
     }
-    else {
-        try {
-            if (err.options.has('output') && err.options.get('output')) {
-                err.getContent().forEach((msg) => {
-                    if (msg)
-                        message.channel.send(msg);
-                });
 
-                if (options.devEnabled)
-                    reject(err.getErrors());
-                else
-                    reject(null);
-            }
-            else if (options.devEnabled)
-                console.error(err);
-        }
-        catch (e) {
-            console.error(err);
-            reject(err);
-        }
-    }
+    reject(null);
 }
 
 /**
@@ -216,7 +206,7 @@ function parse(bot, message, options) {
     const prefixCheck = new RegExp(`^${bot.prefix}`);
 
     if (!prefixCheck.test(message.content))
-        return Promise.reject(null);
+        return Promise.resolve(null);
 
     return new Promise((resolve, reject) => {
         parseString(bot, message.content, message)
@@ -226,16 +216,22 @@ function parse(bot, message, options) {
                  * @param {Output} output
                  */
                 const send = (output) => {
-                    message.reply(output.getContent())
-                        .then((msg) => {
-                            if (output.options.has('clear'))
-                                setTimeout(() => msg.delete().catch((err) => reject(err)), output.options.get('clear').delay * 1000);
-                        })
-                        .catch((err) => {
-                            console.error('Failed to send!', err);
+                    if (!output)
+                        reject(new Error('Invalid output.'));
+                    else if (!output.getContent)
+                        console.log(output);
+                    else {
+                        message.reply(output.getContent())
+                            .then((msg) => {
+                                if (output.options.has('clear'))
+                                    setTimeout(() => msg.delete().catch((err) => reject(err)), output.options.get('clear').delay * 1000);
+                            })
+                            .catch((err) => {
+                                console.error('Failed to send!', err);
 
-                            reject(err);
-                        });
+                                reject(err);
+                            });
+                    }
                 };
 
                 if (Array.isArray(response))
@@ -245,13 +241,7 @@ function parse(bot, message, options) {
 
                 resolve(response);
             })
-            .catch((err) => {
-                console.log('FAILED TO PARSE COMMAND.');
-                console.error(err);
-
-                if (err !== null)
-                    onParseError(err, message, options, reject);
-            });
+            .catch((err) => onParseError(err, message, options, reject));
     });
 }
 

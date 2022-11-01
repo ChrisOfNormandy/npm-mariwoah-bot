@@ -11,27 +11,27 @@ const {
 
 const voiceChannel = {
     /**
-     * 
-     * @param {Discord.Message} message 
-     * @returns 
+     *
+     * @param {Discord.Message} message
+     * @returns
      */
     get(message) {
         return message.member.voice.channel;
     },
 
     /**
-     * 
-     * @param {Discord.Message} message 
-     * @returns 
+     *
+     * @param {Discord.Message} message
+     * @returns
      */
     connection(message) {
         return getVoiceConnection(message.guild.id);
     },
 
     /**
-     * 
-     * @param {Discord.Message} message 
-     * @param {string} channelId 
+     *
+     * @param {Discord.Message} message
+     * @param {string} channelId
      * @returns
      */
     join(message, channelId) {
@@ -45,8 +45,8 @@ const voiceChannel = {
     },
 
     /**
-     * 
-     * @param {Discord.Message} message 
+     *
+     * @param {Discord.Message} message
      */
     leave(message) {
         let con = this.connection(message);
@@ -67,18 +67,18 @@ const audioPlayer = {
     },
 
     /**
-     * 
-     * @param {AudioPlayer} player 
-     * @param  {...VoiceConnection} connections 
+     *
+     * @param {AudioPlayer} player
+     * @param  {...VoiceConnection} connections
      */
     connect(player, ...connections) {
         connections.forEach((con) => con.subscribe(player));
     },
 
     /**
-     * 
-     * @param {internal.Readable} stream 
-     * @returns 
+     *
+     * @param {internal.Readable} stream
+     * @returns
      */
     createResource(stream) {
         const audio = createAudioResource(stream, { inlineVolume: true });

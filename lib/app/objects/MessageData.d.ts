@@ -4,16 +4,20 @@ declare class MessageData {
      *
      * @param {import('./Bot')} bot
      * @param {string} content
-     * @param {import('discord.js').GuildMember} member
+     * @param {import('discord.js').Message} message
      * @param {import('./Output')} ingest
      * @param {import('./MessageData')} ingestData
      */
-    constructor(bot: import('./Bot'), content: string, member: import('discord.js').GuildMember, ingest?: import('./Output'), ingestData?: import('./MessageData'));
+    constructor(bot: import('./Bot'), content: string, message: import('discord.js').Message, ingest?: import('./Output'), ingestData?: import('./MessageData'));
+    handleVars(content: any, str_: any): {
+        content: any;
+        str: any;
+    };
     /**
      *
      * @param {string} content
      */
-    build(content: string): void;
+    build(contentIn: any): void;
     content: string;
     /**
      *
@@ -43,6 +47,7 @@ declare class MessageData {
     checkVar(key: any, eq: any): boolean;
     checkVarNot(key: any, eq: any): boolean;
     bot: import("./Bot");
+    message: import("discord.js").Message<boolean>;
     variables: any[];
     mentions: any[];
     roles: any[];

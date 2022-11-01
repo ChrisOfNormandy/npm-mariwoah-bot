@@ -1,2 +1,8 @@
 .gitignore
 .eslintrc.json
+.env
+tsconfig.json
+nodemon.json
+
+src/
+test.js

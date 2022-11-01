@@ -47,24 +47,11 @@ class Bot {
 
                     parse(this, message, { devEnabled })
                         .then((response) => {
-                            let end = Date.now();
-
                             if (this.config.settings.dev.enabled) {
+                                let end = Date.now();
+
                                 console.log(getTimestamp(start, end));
                                 console.log(response);
-                            }
-
-                            if (this.config.settings.logging.enabled) {
-                                this.config.settings.logging.channels.forEach((log) => {
-                                    this.client.guilds.fetch(log.guild)
-                                        .then((guild) => {
-                                            if (log.options.onStart)
-                                                guild.channels.cache
-                                                    .get(log.channel)
-                                                    .send('This bot has been configured to output logging notifications to this channel.\nThis is a startup notice.');
-                                        })
-                                        .catch((err) => console.error('Failed to fetch guild.', err));
-                                });
                             }
                         })
                         .catch((err) => {
@@ -103,14 +90,15 @@ class Bot {
                             };
 
                             this.config.settings.logging.channels.forEach(printToChannel);
-
-                            resolve(this);
                         }
-                        else
-                            resolve(this);
+
+                        resolve(this);
                     };
 
-                    this.client.on('ready', onReady);
+                    this.client.on('ready', (c) => {
+                        onReady(c);
+                        console.log('READY');
+                    });
 
                     this.client.on('error', (err) => {
                         console.error(err);
@@ -137,16 +125,12 @@ class Bot {
 
         return new Promise((resolve, reject) => {
             this.setClient(this.config.auth.token)
-                .then(() => {
-                    console.log('Created client.');
+                .then(() => onLogin())
+                .then((bot) => {
+                    if (this.config.settings.dev.enabled)
+                        console.log('Connected:', bot);
 
-                    onLogin()
-                        .then((dbStatus) => {
-                            console.log('Connected:', dbStatus);
-
-                            resolve(this);
-                        })
-                        .catch(reject);
+                    resolve(this);
                 })
                 .catch(reject);
         });
@@ -158,14 +142,14 @@ class Bot {
      * @param {ActivityType} statusType
      * @returns
      */
-    setStatus(str, statusType = ActivityType.Watching) {
+    setStatus(str, statusType = ActivityType.Watching, suppressError = false) {
         this.status = str;
         this.statusType = statusType;
 
         if (this.client)
             this.client.user.setActivity(this._formatStr(this.status), { type: this.statusType });
-        else
-            console.error(new Error('No client?'));
+        else if (!suppressError)
+            console.error(new Error('No client? - ' + this.client));
 
         return this;
     }
@@ -264,7 +248,7 @@ class Bot {
         else
             this.fromConfig(createConfig());
 
-        this.setStatus('chat. | %prefix%? | %prefix%help')
+        this.setStatus('chat. | %prefix%? | %prefix%help', ActivityType.Watching, true)
             .allow(
                 GatewayIntentBits.MessageContent,
                 GatewayIntentBits.GuildMessages

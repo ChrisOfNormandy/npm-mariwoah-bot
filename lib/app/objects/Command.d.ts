@@ -4,9 +4,9 @@ declare class Command {
      *
      * @param {string} group
      * @param {string} name
-     * @param {function(import('discord.js').Message, import('./MessageData'))} func
+     * @param {function(import('./MessageData'))} func
      */
-    constructor(group?: string, name?: string, func?: (arg0: import('discord.js').Message, arg1: import('./MessageData')) => any);
+    constructor(group?: string, name?: string, func?: (arg0: import('./MessageData')) => any);
     /**
      *
      * @returns
@@ -119,11 +119,10 @@ declare class Command {
     setFlagDescription(index: number, name: string, desc: string, optional?: boolean): Command;
     /**
      *
-     * @param {import('discord.js').Message} message
      * @param {import('./MessageData')} data
      * @returns
      */
-    run(message: import('discord.js').Message, data: import('./MessageData')): Promise<import("./Output")>;
+    run(data: import('./MessageData')): Promise<import("./Output")>;
     /**
      *
      * @param {string} key
@@ -170,11 +169,11 @@ declare class Command {
     name: string;
     /**
      *
-     * @param {function(Discord.Message, MessageData):Promise<import('./Output')>} func
+     * @param {function(MessageData):Promise<import('./Output')>} func
      * @returns
      */
-    setFunction(func: (arg0: Discord.Message, arg1: MessageData) => Promise<import('./Output')>): Command;
-    func: (arg0: Discord.Message, arg1: MessageData) => Promise<import('./Output')>;
+    setFunction(func: (arg0: MessageData) => Promise<import('./Output')>): Command;
+    func: (arg0: import('./MessageData')) => Promise<import('./Output')>;
     /**
      *
      * @param {string} flag

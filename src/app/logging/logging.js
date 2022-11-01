@@ -1,7 +1,17 @@
+/**
+ *
+ * @param {string} char
+ * @returns
+ */
 function widthText(char = '#') {
     return char.repeat(process.stdout.columns);
 }
 
+/**
+ *
+ * @param {Error} err
+ * @param {string} header
+ */
 function error(err, header = null) {
     console.error(
         widthText(),

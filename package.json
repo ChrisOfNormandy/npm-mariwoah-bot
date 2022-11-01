@@ -2,37 +2,40 @@
     "name": "@chrisofnormandy/mariwoah-bot",
     "author": "ChrisOfNormandy",
     "license": "GNU General Public License (GPL)",
-    "version": "0.3.0",
+    "version": "0.3.5",
     "description": "Bot import package for Discord.",
     "main": "indexJS.js",
     "typings": "./lib/indexTS.d.ts",
     "exports": {
         ".": [
             {
-                "require": "./src/index.js",
-                "import": "./src/index.ts"
+                "require": "./lib/index.js",
+                "import": "./lib/index.ts"
             }
         ]
     },
     "dependencies": {
-        "@discordjs/opus": "^0.8.0",
-        "@discordjs/voice": "^0.11.0",
+        "@discordjs/opus": "^0.9.0",
+        "@discordjs/voice": "^0.13.0",
         "discord.js": "^14.6.0",
+        "dotenv": "^16.0.3",
         "ffmpeg": "^0.0.4",
+        "ffmpeg-static": "5.1.0",
         "lodash": "^4.17.21",
         "pg": "^8.8.0",
-        "tweetnacl": "^1.0.3"
+        "tweetnacl": "^1.0.3",
+        "uuid": "^9.0.0"
     },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^5.40.0",
-        "@typescript-eslint/parser": "^5.40.0",
-        "eslint": "^8.25.0",
+        "@typescript-eslint/eslint-plugin": "^5.41.0",
+        "@typescript-eslint/parser": "^5.41.0",
+        "eslint": "^8.26.0",
         "typescript": "^4.8.4"
     },
     "scripts": {
         "build": "rm -rf lib; tsc",
         "reinstall": "rm -rf node_modules && yarn",
-        "publish": "yarn build && npm publish --access public",
-        "test": "node --trace-warnings test.js"
+        "release": "yarn build && npm publish --access public",
+        "test": "yarn build && nodemon --trace-warnings test.js"
     }
 }

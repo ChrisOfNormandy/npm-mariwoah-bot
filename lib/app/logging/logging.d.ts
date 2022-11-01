@@ -1,5 +1,10 @@
 export namespace logging {
     export { error };
 }
-declare function error(err: any, header?: null): void;
+/**
+ *
+ * @param {Error} err
+ * @param {string} header
+ */
+declare function error(err: Error, header?: string): void;
 export {};

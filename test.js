@@ -1,24 +1,49 @@
-const { Intents } = require('discord.js');
-const { Bot } = require('./indexJS');
+const { Bot, Discord } = require('./src/index');
+require('dotenv').config();
+
 const config = {
     'settings': {
         'commands': {
             'prefix': '~'
         },
         'dev': {
-            'enabled': true
+            'enabled': false
         },
         'logging': {
             'enabled': true,
-            'channels': []
+            'channels': [
+                {
+                    'guild': process.env.GUILD_ID,
+                    'channel': process.env.CHANNEL_ID,
+                    'options': {
+                        'onStart': true
+                    }
+                }
+            ]
         }
     },
     'auth': {
-        'token': ''
+        'token': process.env.CLIENT_TOKEN
     }
 };
 
-const bot = new Bot(config, [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES], {});
+const startupConfig = {
+    devEnabled: true
+};
 
-bot.startup({ devEnabled: true })
-    .catch((err) => console.error(err));
+const onStartup = () => console.log('Ready!');
+
+const bot = new Bot(config)
+    .allow(
+        Discord.GatewayIntentBits.Guilds,
+        Discord.GatewayIntentBits.GuildEmojisAndStickers,
+        Discord.GatewayIntentBits.GuildPresences,
+        Discord.GatewayIntentBits.GuildVoiceStates,
+        Discord.GatewayIntentBits.GuildMembers
+    );
+
+bot
+    .startup(startupConfig)
+    .then((bot) => bot.setStatus('%guild_count% servers | %prefix%?'))
+    .catch(console.error)
+    .then(onStartup);
